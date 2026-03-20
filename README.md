@@ -87,7 +87,7 @@ The editable install (`-e .`) puts `src/` on the Python path so scripts run with
 ```python
 import pandas as pd
 from src.core.models import ColumnSchema, DType, Schema
-from src.core.validator import validate
+from src.core.validator import validate_against_schema
 
 schema = Schema(columns=[
     ColumnSchema(name="name",  dtype=DType.STRING,  nullable=False),
@@ -103,7 +103,7 @@ df = pd.DataFrame({
     "grade": ["A", "X"],
 })
 
-report = validate(df, schema)
+report = validate_against_schema(df, schema)
 print(report.summary)
 # Validation failed with 3 violation(s): nullable, max_value, allowed_values
 

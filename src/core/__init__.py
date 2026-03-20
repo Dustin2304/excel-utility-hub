@@ -7,7 +7,7 @@ from src.core.models import (
     ValidationReport,
     Violation,
 )
-from src.core.validator import validate
+from src.core.validator import validate_against_schema
 
 __all__ = [
     "ColumnSchema",
@@ -17,5 +17,5 @@ __all__ = [
     "Schema",
     "ValidationReport",
     "Violation",
-    "validate",
+    "validate_against_schema",
 ]

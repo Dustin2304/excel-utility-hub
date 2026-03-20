@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from src.core.models import ColumnSchema, DType, Schema
-from src.core.validator import validate
+from src.core.validator import validate_against_schema as validate
 
 # ---------------------------------------------------------------------------
 # Helpers

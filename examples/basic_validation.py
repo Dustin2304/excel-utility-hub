@@ -1,6 +1,6 @@
 import pandas as pd
 from src.core.models import ColumnSchema, DType, Schema
-from src.core.validator import validate
+from src.core.validator import validate_against_schema
 
 # Schema definieren
 schema = Schema(columns=[
@@ -24,8 +24,8 @@ df_bad = pd.DataFrame({
     "grade": ["A", "X"],            # X nicht in allowed_values
 })
 
-report_ok  = validate(df_ok,  schema)
-report_bad = validate(df_bad, schema)
+report_ok  = validate_against_schema(df_ok,  schema)
+report_bad = validate_against_schema(df_bad, schema)
 
 print("=== Valides DataFrame ===")
 print(report_ok.summary)

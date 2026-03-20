@@ -12,7 +12,7 @@ _DTYPE_MAP: dict[DType, type] = {
 }
 
 
-def validate(df: pd.DataFrame, schema: Schema) -> ValidationReport:
+def validate_against_schema(df: pd.DataFrame, schema: Schema) -> ValidationReport:
     """
     Validate a DataFrame against a Schema definition.
 
