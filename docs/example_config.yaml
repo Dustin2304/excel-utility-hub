@@ -1,0 +1,29 @@
+sources:
+  - path: data/sales_q1.xlsx
+    schema: schemas/example_schema.yml
+    column_mapping:
+      Kundennummer: customer_id
+      Umsatz_EUR: revenue
+
+  - path: data/sales_q2.xlsx
+    schema: schemas/example_schema.yml
+
+merge:
+  join_key: customer_id
+  conflict_resolution: last_wins
+
+cleaning:
+  duplicate_strategy: drop_last
+  missing_value_strategy:
+    revenue: mean
+    region: drop
+
+ml:
+  outlier_detection:
+    enabled: true
+    method: isolation_forest
+    contamination: 0.05
+
+output:
+  path: output/merged_clean.xlsx
+  report: output/pipeline_report.json
