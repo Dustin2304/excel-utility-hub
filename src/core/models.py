@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 
@@ -92,4 +93,33 @@ class DedupReport:
             "duplicates_found": self.duplicates_found,
             "rows_affected":    self.rows_affected,
             "strategy_used":    self.strategy_used.value,
+        }
+
+
+class ConflictStrategy(str, Enum):
+    LAST_WINS  = "last_wins"
+    FIRST_WINS = "first_wins"
+    RAISE      = "raise"
+
+
+@dataclass
+class ExcelSource:
+    path:            Path
+    expected_schema: Schema
+    column_mapping:  dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
+class MergeReport:
+    sources_loaded:     int
+    rows_total:         int
+    conflicts_resolved: int
+    strategy_used:      ConflictStrategy
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "sources_loaded":     self.sources_loaded,
+            "rows_total":         self.rows_total,
+            "conflicts_resolved": self.conflicts_resolved,
+            "strategy_used":      self.strategy_used.value,
         }
