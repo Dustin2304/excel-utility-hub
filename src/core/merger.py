@@ -22,7 +22,21 @@ def merge_sources(
     join_key: str,
     conflict_resolution: ConflictStrategy = ConflictStrategy.LAST_WINS,
 ) -> MergeReport:
-    """Load, validate, and merge multiple Excel sources into one DataFrame.
+    """Load, validate, and merge multiple Excel sources, returning a report.
+
+    See :func:`load_and_merge_sources` for the variant that also returns the
+    merged DataFrame.
+    """
+    _, report = load_and_merge_sources(sources, join_key, conflict_resolution)
+    return report
+
+
+def load_and_merge_sources(
+    sources: list[ExcelSource],
+    join_key: str,
+    conflict_resolution: ConflictStrategy = ConflictStrategy.LAST_WINS,
+) -> tuple[pd.DataFrame, MergeReport]:
+    """Load, validate, and merge multiple Excel sources.
 
     Args:
         sources: List of Excel source definitions.
@@ -31,14 +45,15 @@ def merge_sources(
             across sources.
 
     Returns:
-        A :class:`MergeReport` describing the merge.
+        Tuple of ``(merged DataFrame, MergeReport)``.
 
     Raises:
         ValueError: If a source fails schema validation, or if conflicts
             are detected and ``conflict_resolution`` is ``RAISE``.
     """
     if not sources:
-        return MergeReport(
+        empty = pd.DataFrame()
+        return empty, MergeReport(
             sources_loaded=0,
             rows_total=0,
             conflicts_resolved=0,
@@ -49,12 +64,13 @@ def merge_sources(
     merged, conflicts_resolved = _resolve_conflicts(
         frames, join_key, conflict_resolution
     )
-    return MergeReport(
+    report = MergeReport(
         sources_loaded=len(sources),
         rows_total=len(merged),
         conflicts_resolved=conflicts_resolved,
         strategy_used=conflict_resolution,
     )
+    return merged, report
 
 
 def _load_and_validate(source: ExcelSource) -> pd.DataFrame:

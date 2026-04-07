@@ -22,11 +22,29 @@ def handle_duplicates(
     Returns:
         A :class:`DedupReport` describing what was found and how it was handled.
     """
+    _, report = dedupe(df, subset=subset, strategy=strategy)
+    return report
+
+
+def dedupe(
+    df: pd.DataFrame,
+    subset: list[str],
+    strategy: DuplicateStrategy,
+) -> tuple[pd.DataFrame, DedupReport]:
+    """Apply a duplicate strategy and return both the DataFrame and a report.
+
+    Args:
+        df: Input DataFrame. Never modified in place.
+        subset: Columns to use for duplicate detection.
+        strategy: How to handle duplicates.
+
+    Returns:
+        Tuple of ``(cleaned DataFrame, DedupReport)``. For ``FLAG`` the
+        DataFrame gains an ``is_duplicate`` boolean column.
+    """
     if df.empty:
-        return DedupReport(
-            duplicates_found=0,
-            rows_affected=0,
-            strategy_used=strategy,
+        return df, DedupReport(
+            duplicates_found=0, rows_affected=0, strategy_used=strategy
         )
 
     duplicate_mask = df.duplicated(subset=subset, keep=False)
@@ -34,14 +52,14 @@ def handle_duplicates(
     duplicates_found = flagged_count // 2
 
     if duplicates_found == 0:
-        return DedupReport(
-            duplicates_found=0,
-            rows_affected=0,
-            strategy_used=strategy,
+        return df, DedupReport(
+            duplicates_found=0, rows_affected=0, strategy_used=strategy
         )
 
     if strategy is DuplicateStrategy.FLAG:
-        return DedupReport(
+        result = df.copy()
+        result["is_duplicate"] = duplicate_mask
+        return result, DedupReport(
             duplicates_found=duplicates_found,
             rows_affected=flagged_count,
             strategy_used=strategy,
@@ -49,7 +67,7 @@ def handle_duplicates(
 
     result = _apply_strategy(df, subset, strategy)
     rows_affected = len(df) - len(result)
-    return DedupReport(
+    return result, DedupReport(
         duplicates_found=duplicates_found,
         rows_affected=rows_affected,
         strategy_used=strategy,
