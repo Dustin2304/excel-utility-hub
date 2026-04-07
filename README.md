@@ -14,7 +14,7 @@ Excel files arriving from external sources rarely conform to what downstream cod
 
 ## Features
 
-**Case A — Schema Validator (complete)**
+**Case A — Schema Validator**
 
 - Detects missing and unexpected columns
 - Flags null values in non-nullable columns, with row-level indices
@@ -22,6 +22,36 @@ Excel files arriving from external sources rarely conform to what downstream cod
 - Enforces numeric `min_value` / `max_value` bounds; boundary values pass
 - Validates against an explicit `allowed_values` list
 - Returns a structured `ValidationReport` — never raises, never prints
+
+**Case B — Duplicate Handler**
+
+- Four configurable strategies: `DROP_FIRST`, `DROP_LAST`, `FLAG`, `MERGE_AGGREGATE`
+- Multi-column duplicate detection via `subset`
+- `FLAG` adds an `is_duplicate` column without removing rows
+- `MERGE_AGGREGATE` sums numeric columns and keeps first non-numeric value
+- Returns a `DedupReport` with counts and the strategy used
+
+**Case C — Multi-Source Merger**
+
+- Loads, validates, and merges multiple Excel sources via `ExcelSource` definitions
+- Per-source `column_mapping` for reconciling foreign column names
+- Three conflict strategies: `LAST_WINS`, `FIRST_WINS`, `RAISE`
+- Each source is validated against its own schema before merging
+- Returns a `MergeReport` (and `load_and_merge_sources` returns the DataFrame too)
+
+**Case D — Outlier Detection**
+
+- Three methods: `IQR` (fast, no ML), `ZSCORE` (classic), `ISOLATION_FOREST` (sklearn)
+- IQR for normally distributed data, ZSCORE when extreme values matter,
+  IsolationForest for high-dimensional data without normality assumptions
+- Multi-column detection
+- Returns an `OutlierReport` with row indices of flagged rows
+
+**Pipeline Runner & CLI**
+
+- `run_pipeline(PipelineConfig)` orchestrates: validate → merge → dedupe → outliers
+- YAML-driven CLI: `python -m src.cli.main --config docs/example_config.yaml`
+- `PipelineReport` summarises every stage
 
 ---
 
@@ -111,6 +141,12 @@ for v in report.violations:
     print(f"[{v.rule}] {v.column} — rows {v.row_indices}: {v.message}")
 ```
 
+Or run a full pipeline from a YAML config:
+
+```bash
+python -m src.cli.main --config docs/example_config.yaml
+```
+
 ---
 
 ## Running Tests
@@ -122,7 +158,7 @@ mypy src/
 pytest tests/ --cov=src --cov-report=term-missing
 ```
 
-Current results: 17 tests, 0 failures, 94% coverage.
+Current results: 54 tests, 0 failures, 97% coverage.
 
 ---
 
@@ -131,11 +167,11 @@ Current results: 17 tests, 0 failures, 94% coverage.
 | Case | Description | Status |
 |---|---|---|
 | A | Schema Validator | Done |
-| B | Duplicate Handler | Next |
-| C | Multi-source Merger | Planned |
-| D | ML Outlier Detection | Planned |
-| — | Pipeline Runner | Planned |
-| — | CLI | Planned |
+| B | Duplicate Handler | Done |
+| C | Multi-source Merger | Done |
+| D | ML Outlier Detection | Done |
+| — | Pipeline Runner | Done |
+| — | CLI | Done |
 | — | Dashboard | Planned |
 
 ---
