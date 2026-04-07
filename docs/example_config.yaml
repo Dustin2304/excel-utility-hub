@@ -1,12 +1,31 @@
+# Example pipeline configuration consumed by `python -m src.cli.main --config <file>`.
 sources:
   - path: data/sales_q1.xlsx
-    schema: schemas/example_schema.yml
     column_mapping:
       Kundennummer: customer_id
       Umsatz_EUR: revenue
+    schema:
+      allow_extra_cols: true
+      columns:
+        - name: customer_id
+          dtype: int
+          nullable: false
+        - name: revenue
+          dtype: float
+          nullable: false
+          min_value: 0
 
   - path: data/sales_q2.xlsx
-    schema: schemas/example_schema.yml
+    schema:
+      allow_extra_cols: true
+      columns:
+        - name: customer_id
+          dtype: int
+          nullable: false
+        - name: revenue
+          dtype: float
+          nullable: false
+          min_value: 0
 
 merge:
   join_key: customer_id
@@ -14,16 +33,15 @@ merge:
 
 cleaning:
   duplicate_strategy: drop_last
-  missing_value_strategy:
-    revenue: mean
-    region: drop
+  duplicate_subset:
+    - customer_id
 
-ml:
-  outlier_detection:
-    enabled: true
-    method: isolation_forest
-    contamination: 0.05
+outliers:
+  enabled: true
+  method: isolation_forest
+  contamination: 0.05
+  columns:
+    - revenue
 
 output:
   path: output/merged_clean.xlsx
-  report: output/pipeline_report.json
