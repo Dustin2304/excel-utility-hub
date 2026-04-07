@@ -59,8 +59,8 @@ class ValidationReport:
             + ", ".join(v.rule for v in self.violations)
         )
 
-def to_dict(self: "ValidationReport") -> dict[str, Any]:
-    return {
+    def to_dict(self) -> dict[str, Any]:
+        return {
             "is_valid":   self.is_valid,
             "summary":    self.summary,
             "violations": [
