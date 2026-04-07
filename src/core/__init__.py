@@ -1,3 +1,4 @@
+from src.core.cleaner import handle_duplicates
 from src.core.models import (
     ColumnSchema,
     DedupReport,
@@ -17,5 +18,6 @@ __all__ = [
     "Schema",
     "ValidationReport",
     "Violation",
+    "handle_duplicates",
     "validate_against_schema",
 ]
