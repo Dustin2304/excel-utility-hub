@@ -123,3 +123,25 @@ class MergeReport:
             "conflicts_resolved": self.conflicts_resolved,
             "strategy_used":      self.strategy_used.value,
         }
+
+
+class OutlierMethod(str, Enum):
+    ISOLATION_FOREST = "isolation_forest"
+    ZSCORE           = "zscore"
+    IQR              = "iqr"
+
+
+@dataclass
+class OutlierReport:
+    outlier_indices:    list[int]
+    method_used:        OutlierMethod
+    contamination_rate: float
+    columns_checked:    list[str]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "outlier_indices":    self.outlier_indices,
+            "method_used":        self.method_used.value,
+            "contamination_rate": self.contamination_rate,
+            "columns_checked":    self.columns_checked,
+        }
