@@ -91,7 +91,6 @@ This separation makes the test suite fast and deterministic, and it makes it pos
 | ruff | Fast linter and import sorter; replaces flake8 + isort |
 | mypy (strict) | Catches type errors before runtime |
 | GitHub Actions | CI on every push and PR |
-| Docker | Reproducible execution environment (planned) |
 
 ---
 
