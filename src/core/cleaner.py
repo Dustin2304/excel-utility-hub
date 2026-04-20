@@ -49,7 +49,8 @@ def dedupe(
 
     duplicate_mask = df.duplicated(subset=subset, keep=False)
     flagged_count = int(duplicate_mask.sum())
-    duplicates_found = flagged_count // 2
+    # Count non-first occurrences so groups of 3+ rows are handled correctly.
+    duplicates_found = int(df.duplicated(subset=subset, keep="first").sum())
 
     if duplicates_found == 0:
         return df, DedupReport(
