@@ -118,8 +118,7 @@ def _last_wins(
     frames: list[pd.DataFrame], join_key: str
 ) -> tuple[pd.DataFrame, int]:
     combined = pd.concat(frames, ignore_index=True)
-    duplicate_mask = combined.duplicated(subset=[join_key], keep=False)
-    conflicts = int(duplicate_mask.sum()) // 2
+    conflicts = int(combined.duplicated(subset=[join_key], keep="first").sum())
     merged = combined.drop_duplicates(subset=[join_key], keep="last").reset_index(
         drop=True
     )
