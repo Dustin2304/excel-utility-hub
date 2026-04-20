@@ -72,14 +72,12 @@ def _load_config(path: Path) -> PipelineConfig:
     merge_cfg = _build_merge_config(raw.get("merge", {}))
     cleaning_cfg = _build_cleaning_config(raw.get("cleaning", {}))
     outliers_cfg = _build_outlier_config(raw.get("outliers", {}))
-    output_path = Path(raw.get("output", {}).get("path", "output/merged_clean.xlsx"))
 
     return PipelineConfig(
         sources=sources,
         merge=merge_cfg,
         cleaning=cleaning_cfg,
         outliers=outliers_cfg,
-        output_path=output_path,
     )
 
 

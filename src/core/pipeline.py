@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -54,13 +53,10 @@ class MergeConfig:
 
 @dataclass
 class PipelineConfig:
-    sources:     list[ExcelSource]
-    merge:       MergeConfig    = field(default_factory=MergeConfig)
-    cleaning:    CleaningConfig = field(default_factory=CleaningConfig)
-    outliers:    OutlierConfig  = field(default_factory=OutlierConfig)
-    output_path: Path           = field(
-        default_factory=lambda: Path("output/merged_clean.xlsx")
-    )
+    sources:  list[ExcelSource]
+    merge:    MergeConfig    = field(default_factory=MergeConfig)
+    cleaning: CleaningConfig = field(default_factory=CleaningConfig)
+    outliers: OutlierConfig  = field(default_factory=OutlierConfig)
 
 
 @dataclass

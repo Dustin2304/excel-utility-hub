@@ -42,6 +42,3 @@ outliers:
   contamination: 0.05
   columns:
     - revenue
-
-output:
-  path: output/merged_clean.xlsx
