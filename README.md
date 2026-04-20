@@ -72,9 +72,9 @@ flowchart LR
 
 The codebase is split into two layers that are kept strictly separate.
 
-`src/core/` contains all business logic: validation rules, deduplication strategies, merge logic, and ML analysis. Every function in `core/` is a pure transformation — it takes data in, returns a result, and has no side effects. There are no file reads, no prints, no database calls. This constraint means every function can be tested by constructing a `pd.DataFrame` inline; no fixtures, no mocks, no temporary files.
+`src/core/` contains all business logic: validation rules, deduplication strategies, merge logic, and ML analysis. Almost every function is a pure transformation — data in, result out, no side effects. The one deliberate exception is `merger.py`, which must read Excel files by design; all other modules are side-effect-free and tested with inline `pd.DataFrame` construction. Tests for the merger and pipeline use temporary files via pytest's `tmp_path` fixture because file I/O there is unavoidable.
 
-`src/cli/` is the only place that touches the outside world. It parses arguments, reads files, calls `core/`, and formats output. The CLI is thin by design: if logic creeps in here, it cannot be unit-tested without invoking the full process.
+`src/cli/` is the only adapter that touches the outside world. It parses arguments, reads the YAML config, calls `core/`, and formats output. The CLI is thin by design: if logic creeps in here, it cannot be unit-tested without invoking the full process.
 
 This separation makes the test suite fast and deterministic, and it makes it possible to add a dashboard or API adapter later without touching any core logic.
 
@@ -157,8 +157,6 @@ ruff check src/ tests/
 mypy src/
 pytest tests/ --cov=src --cov-report=term-missing
 ```
-
-Current results: 54 tests, 0 failures, 97% coverage.
 
 ---
 
