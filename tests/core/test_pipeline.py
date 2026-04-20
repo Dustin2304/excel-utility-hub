@@ -139,5 +139,4 @@ def test_to_dict_structure(tmp_path: Path, schema: Schema) -> None:
         "rows_after_merge",
         "rows_after_dedup",
         "outliers_flagged",
-        "violations_found",
     }

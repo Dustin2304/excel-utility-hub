@@ -65,11 +65,10 @@ class PipelineConfig:
 
 @dataclass
 class PipelineReport:
-    sources_loaded:     int
-    rows_after_merge:   int
-    rows_after_dedup:   int
-    outliers_flagged:   int
-    violations_found:   int
+    sources_loaded:   int
+    rows_after_merge: int
+    rows_after_dedup: int
+    outliers_flagged: int
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -77,7 +76,6 @@ class PipelineReport:
             "rows_after_merge": self.rows_after_merge,
             "rows_after_dedup": self.rows_after_dedup,
             "outliers_flagged": self.outliers_flagged,
-            "violations_found": self.violations_found,
         }
 
 
@@ -112,7 +110,6 @@ def run_pipeline(config: PipelineConfig) -> PipelineReport:
         rows_after_merge=rows_after_merge,
         rows_after_dedup=rows_after_dedup,
         outliers_flagged=outliers_flagged,
-        violations_found=0,
     )
 
 
